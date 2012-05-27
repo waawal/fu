@@ -95,10 +95,6 @@ class FuProxy(object, PureProxy):
                 conn.close()
 
 
-class FuDebug(object, DebuggingServer):
-    pass
-
-
 def main(configurationfile):
     stream = file(configurationfile, 'r')
     configuration = yaml.load(stream)
