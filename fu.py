@@ -5,15 +5,13 @@ import argparse
 import pprint
 from itertools import cycle
 
-import gevent
 import gevent.monkey
 gevent.monkey.patch_select()
-gevent.monkey.patch_socket(aggressive=False)
+gevent.monkey.patch_socket()
 
 import asyncore
 import socket
-from socket import gethostbyname
-from smtpd import SMTPServer, PureProxy, DebuggingServer, SMTPChannel
+from smtpd import PureProxy, SMTPChannel
 
 
 import yaml
@@ -27,7 +25,7 @@ def check(zone, predicate=2):
         >= the predicate.
     """
     try:
-        reply = gethostbyname(zone)
+        reply = socket.gethostbyname(zone)
         result = int(reply.split('.')[-1])
         log.debug('DNSBL reply: {0} > result: {1}.'.format(reply, result))
         return  result >= predicate
@@ -50,7 +48,7 @@ def is_spam(ip, provider, predicate=2):
         reply is >= the predicament. 2 is the default as per RFC.
     """
     try:
-        ip = gethostbyname(ip) # returns ip
+        ip = socket.gethostbyname(ip) # returns ip
     except socket.error:
         log.debug('No address associated with hostname.')
         return True # No address associated with hostname.
