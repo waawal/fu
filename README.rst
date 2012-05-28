@@ -1,6 +1,7 @@
 FU!
 ---
-DNSBL checking SMTPD-Proxy
+
+**DNSBL** checking *SMTPD-Proxy*
 
 Example Configuration File
 ==========================
