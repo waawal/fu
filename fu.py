@@ -113,11 +113,13 @@ def main(configurationfile):
         asyncore.loop()
     except KeyboardInterrupt:
         log.critical('Interrupted.')
-    
 
-if __name__ == '__main__':
+def dispatch()
     parser = argparse.ArgumentParser(description='DNSBL SMTPD')
     parser.add_argument('configuration', metavar='configuration', type=str,
                         help='Configuration File in YAML-format.')
     args = parser.parse_args()
     main(args.configuration)
+
+if __name__ == '__main__':
+    dispatch()
