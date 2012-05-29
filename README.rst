@@ -1,7 +1,7 @@
 FU!
 ===
 
-The **F**unneling **U**nit
+The *Funneling Unit*
 
 **DNSBL** checking *SMTP-Proxy*
 
