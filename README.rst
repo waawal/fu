@@ -3,6 +3,16 @@ FU!
 
 **DNSBL** checking *SMTPD-Proxy*
 
+FU is a simple yet powerful SMTP Proxy that checks the incoming connections against preconfigured DNSBL's. Based on weights and threshholds it then decides weather it should proxy the email to the upstream or hang up (close) the connection.
+
+FU is optimized to run in a virtual machine environment. It should be able to handle a couple of hundred incoming connections per second on a single core system/vm.
+
+Features
+========
+
+* Round Robin Load Balancing of Backends.
+* Ability to check several blacklists.
+
 Example Configuration File
 ==========================
 ::
