@@ -109,8 +109,8 @@ def main(configurationfile):
         log.level_name = settings.get('loglevel').upper()
     predicate = settings.get('predicate', 2)
     threshhold = settings.get('threshhold', 1.0)
-    binding = settings['bind'].items()[0]
-    upstream = [pair.items()[0] for pair in settings['upstream']]
+    binding = settings.get('bind', {'0.0.0.0': 25}).items().pop()
+    upstream = [pair.items().pop() for pair in settings['upstream']]
     server = FuProxy(binding, upstream, providers,
                      predicate, threshhold)
     try:
