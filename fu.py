@@ -58,7 +58,8 @@ def is_spam(ip, provider, predicate=2):
 
 
 class FuProxy(object, PureProxy):
-
+    """ The Proxy, subclass of PureProxy.
+    """
     def __init__(self, binding, upstreams, providers,
                  predicate=2, threshhold=1.0):
         log.notice('Initiating FU Proxy Server')
@@ -67,9 +68,13 @@ class FuProxy(object, PureProxy):
         self.providers = providers
         self.predicate = predicate
         self.threshhold = threshhold
-        log.notice('Initiated.')
+        log.notice('Initialized.')
 
     def handle_accept(self):
+        """ Checks the incoming connection against the configured DNSBL's.
+            if the result is >= than the preconfigured threshhold,
+            the connection gets closed.
+        """
         pair = self.accept()
         if pair is not None:
             conn, addr = pair
@@ -96,6 +101,8 @@ class FuProxy(object, PureProxy):
 
 
 def main(configurationfile):
+    """ Parses the passed in configuration file-path with yaml.
+    """
     stream = file(configurationfile, 'r')
     loglevels= ('critical', 'error', 'warning', 'notice', 'info', 'debug')
     configuration = yaml.load(stream)
@@ -114,17 +121,23 @@ def main(configurationfile):
     threshhold = settings.get('threshhold', 1.0)
     binding = settings.get('bind', {'0.0.0.0': 25}).items().pop()
     upstream = [pair.items().pop() for pair in settings['upstream']]
+    
     server = FuProxy(binding, upstream, providers, predicate, threshhold)
+    
     try:
         asyncore.loop()
     except KeyboardInterrupt:
         log.critical('Interrupted.')
 
 def dispatch()
+    """ Dispatching of commandline arguments to main(), the entry point for
+        scripts.
+    """
     parser = argparse.ArgumentParser(description='DNSBL SMTPD')
     parser.add_argument('configuration', metavar='configuration', type=str,
                         help='Configuration File in YAML-format.')
     args = parser.parse_args()
+    
     main(args.configuration)
 
 if __name__ == '__main__':
