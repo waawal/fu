@@ -3,7 +3,7 @@
 import sys
 import argparse
 import pprint
-from itertools import cycle
+import itertools
 
 import gevent.monkey
 gevent.monkey.patch_select()
@@ -62,7 +62,7 @@ class FuProxy(object, PureProxy):
     def __init__(self, binding, upstreams, providers,
                  predicate=2, threshhold=1.0):
         log.notice('Initiating FU Proxy Server')
-        self.upstreams = cycle(upstreams)
+        self.upstreams = itertools.cycle(upstreams)
         PureProxy.__init__(self, binding, self.upstreams.next())
         self.providers = providers
         self.predicate = predicate
