@@ -5,9 +5,12 @@ import argparse
 import pprint
 import itertools
 
-import gevent.monkey
-gevent.monkey.patch_select()
-gevent.monkey.patch_socket()
+try:
+    import gevent.monkey
+    gevent.monkey.patch_select()
+    gevent.monkey.patch_socket()
+except ImportError:
+    pass
 
 import asyncore
 import socket
