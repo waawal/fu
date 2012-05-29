@@ -1,9 +1,9 @@
 FU!
 ===
 
-The *Funneling Unit*
+The **Funneling Unit**
 
-**DNSBL** checking *SMTP-Proxy*
+*DNSBL* checking *SMTP-Proxy*
 
 FU is a simple yet powerful SMTP Proxy that checks the incoming connections against a list of preconfigured DNSBL's. Based on the weights assigned to the lists and a threshhold it makes a decision weather it should proxy the email to the upstream or hang up (close) the connection.
 
@@ -47,3 +47,9 @@ Example Configuration File
         rhsbl.ahbl.org: {weight: 0.3}
         truncate.gbudb.net: {weight: 1.0}
         zen.spamhaus.org: {weight: 0.5}
+
+References
+==========
+
+* `RFC5782 <http://tools.ietf.org/html/rfc5782>`_
+* `Wikipedia Comparison of DNS blacklists <http://en.wikipedia.org/wiki/Comparison_of_DNS_blacklists>`_
