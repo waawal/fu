@@ -1,17 +1,26 @@
 FU!
----
+===
 
-**DNSBL** checking *SMTPD-Proxy*
+**DNSBL** checking *SMTP-Proxy*
 
-FU is a simple yet powerful SMTP Proxy that checks the incoming connections against preconfigured DNSBL's. Based on weights and threshholds it then decides weather it should proxy the email to the upstream or hang up (close) the connection.
+FU is a simple yet powerful SMTP Proxy that checks the incoming connections against a list of preconfigured DNSBL's. Based on the weights assigned to the lists and a threshhold it makes a decision weather it should proxy the email to the upstream or hang up (close) the connection.
 
 FU is optimized to run in a virtual machine environment. It should be able to handle a couple of hundred incoming connections per second on a single core system/vm.
 
 Features
-========
+--------
 
 * Round Robin Load Balancing of Backends.
 * Ability to check several blacklists.
+
+Deployment
+==========
+
+Debian and Ubuntu
+-----------------
+
+    ``sudo`` ``apt-get`` install python-pip python-gevent python-yaml; ``pip`` install fu
+
 
 Example Configuration File
 ==========================
