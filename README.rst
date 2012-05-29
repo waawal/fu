@@ -13,7 +13,7 @@ Features
 --------
 
 * Round Robin Load Balancing of Backends.
-* Ability to check several blacklists.
+* Ability to check multiple blacklists.
 
 Deployment
 ==========
