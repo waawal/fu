@@ -16,6 +16,8 @@ Features
 Deployment
 ==========
 
+FU is dependent on gevent to harness the power of libevent. You may of course pip-install fu as a normal python application/module, however it is usually easier to just fetch gevent from the OS package repository.
+
 Debian and Ubuntu
 -----------------
 
