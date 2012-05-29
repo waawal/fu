@@ -127,7 +127,7 @@ def main(configurationfile):
     try:
         asyncore.loop()
     except KeyboardInterrupt:
-        log.critical('Interrupted.')
+        log.critical('Interrupted. Cleaning up!')
 
 def dispatch()
     """ Dispatching of commandline arguments to main(), the entry point for
