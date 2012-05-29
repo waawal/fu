@@ -17,12 +17,6 @@ import socket
 from smtpd import PureProxy, SMTPChannel
 
 
-
-from logbook import Logger
-
-
-log = Logger('FU')
-
 def check(zone, predicate=2):
     """ Checks if the name resolves and if the last part of the reply is
         >= the predicate.
@@ -30,10 +24,10 @@ def check(zone, predicate=2):
     try:
         reply = socket.gethostbyname(zone)
         result = int(reply.split('.')[-1])
-        log.debug('DNSBL reply: {0} > result: {1}.'.format(reply, result))
+        logging.debug('DNSBL reply: {0} > result: {1}.'.format(reply, result))
         return  result >= predicate
     except (socket.error, ValueError):
-        log.debug('{0} Not resolvable.'.format(zone))
+        logging.debug('{0} Not resolvable.'.format(zone))
         return False
 
 def as_reversed(ip, suffix):
@@ -42,7 +36,7 @@ def as_reversed(ip, suffix):
         '234.52.218.89.ix.dnsbl.manitu.net.'
     """
     reverse = '.'.join(reversed(ip.split('.')))
-    log.info('{ip}, {suffix} reversed to: {reverse}.{suffix}.'.format(
+    logging.debug('{ip}, {suffix} reversed to: {reverse}.{suffix}.'.format(
              **locals()))
     return '{reverse}.{suffix}.'.format(reverse=reverse, suffix=suffix)
 
@@ -53,7 +47,7 @@ def is_spam(ip, provider, predicate=2):
     try:
         ip = socket.gethostbyname(ip) # returns ip
     except socket.error:
-        log.debug('No address associated with hostname.')
+        logging.debug('No address associated with hostname.')
         return True # No address associated with hostname.
 
     zone = as_reversed(ip, provider)
@@ -65,13 +59,13 @@ class FuProxy(object, PureProxy):
     """
     def __init__(self, binding, upstreams, providers,
                  predicate=2, threshhold=1.0):
-        log.notice('Initiating FU Proxy Server')
+        logging.info('Initiating FU Proxy Server')
         self.upstreams = itertools.cycle(upstreams)
         PureProxy.__init__(self, binding, self.upstreams.next())
         self.providers = providers
         self.predicate = predicate
         self.threshhold = threshhold
-        log.notice('Initialized.')
+        logging.info('Initialized.')
 
     def handle_accept(self):
         """ Checks the incoming connection against the configured DNSBL's.
@@ -82,23 +76,23 @@ class FuProxy(object, PureProxy):
         if pair is not None:
             conn, addr = pair
             ip, port = addr
-            log.notice('Incoming connection from {0} port {1}'.format(ip, port))
+            logging.info('Incoming connection from {0} port {1}'.format(ip, port))
             results = []
             for domain, provider in self.providers.items():
                 if is_spam(ip, domain, self.predicate):
                     weight = provider.get('weight', 0.0)
                     results.append(weight)
-                    log.notice('Positive reply from {0} appending {1}'.format(
+                    logging.info('Positive reply from {0} appending {1}'.format(
                                domain, weight))
 
             if float(sum(results)) < float(self.threshhold):
-                log.notice('{0} is below the threshhold ({1})'.format(
+                logging.info('{0} is below the threshhold ({1})'.format(
                           sum(results), self.threshhold))
                 self._remoteaddr = self.upstreams.next()
-                log.notice('Relaying message to {0}'.format(self._remoteaddr))
+                logging.info('Relaying message to {0}'.format(self._remoteaddr))
                 channel = SMTPChannel(self, conn, addr)
             else:
-                log.notice('{0} is over the threshhold ({1}). Closing!'.format(
+                logging.info('{0} is over the threshhold ({1}). Closing!'.format(
                           sum(results), self.threshhold))
                 conn.close()
 
@@ -108,7 +102,11 @@ def main(configurationfile):
     """
     import yaml
     stream = file(configurationfile, 'r')
-    loglevels= ('critical', 'error', 'warning', 'notice', 'info', 'debug')
+    LEVELS = { 'debug':logging.DEBUG,
+             'info':logging.INFO,
+             'warning':logging.WARNING,
+             'error':logging.ERROR,
+             'critical':logging.CRITICAL,}
     configuration = yaml.load(stream)
     
     settings = configuration.get('settings')
@@ -116,10 +114,12 @@ def main(configurationfile):
     
     if not settings or not providers:
         sys.exit(1)
-    if settings.get('loglevel').lower() in loglevels:
-        log.level_name = settings.get('loglevel').upper()
+    if settings.get('loglevel').lower() in LEVELS.keys():
+        logging.basicConfig(level=LEVELS[settings['loglevel']])
+    else:
+        logging.basicConfig(level=logging.NOTSET)
     
-    log.debug('\nLoaded Configuration:\n' + pprint.pformat(configuration))
+    logging.debug('\nLoaded Configuration:\n' + pprint.pformat(configuration))
     
     predicate = settings.get('predicate', 2)
     threshhold = settings.get('threshhold', 1.0)
@@ -131,7 +131,7 @@ def main(configurationfile):
     try:
         asyncore.loop()
     except KeyboardInterrupt:
-        log.critical('Interrupted. Cleaning up!')
+        logging.critical('Interrupted. Cleaning up!')
 
 def dispatch()
     """ Dispatching of commandline arguments to main(), the entry point for
