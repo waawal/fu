@@ -103,6 +103,10 @@ def main(configurationfile):
     providers = configuration.get('providers')
     if not settings or not providers:
         sys.exit(1)
+    if settings.get('loglevel').lower() in ('critical', 'error',
+                                            'warning', 'notice',
+                                            'info', 'debug'):
+        log.level_name = settings.get('loglevel').upper()
     predicate = settings.get('predicate', 2)
     threshhold = settings.get('threshhold', 1.0)
     binding = settings['bind'].items()[0]

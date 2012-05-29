@@ -8,6 +8,7 @@ Example Configuration File
 ::
 
     settings:
+        loglevel: notice
         predicate: 2
         threshhold: 1.0
         bind:
