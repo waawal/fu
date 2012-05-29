@@ -17,7 +17,7 @@ import socket
 from smtpd import PureProxy, SMTPChannel
 
 
-import yaml
+
 from logbook import Logger
 
 
@@ -106,6 +106,7 @@ class FuProxy(object, PureProxy):
 def main(configurationfile):
     """ Parses the passed in configuration file-path with yaml.
     """
+    import yaml
     stream = file(configurationfile, 'r')
     loglevels= ('critical', 'error', 'warning', 'notice', 'info', 'debug')
     configuration = yaml.load(stream)
