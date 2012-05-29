@@ -97,22 +97,24 @@ class FuProxy(object, PureProxy):
 
 def main(configurationfile):
     stream = file(configurationfile, 'r')
+    loglevels= ('critical', 'error', 'warning', 'notice', 'info', 'debug')
     configuration = yaml.load(stream)
-    log.debug('\nLoaded Configuration:\n' + pprint.pformat(configuration))
+    
     settings = configuration.get('settings')
     providers = configuration.get('providers')
+    
     if not settings or not providers:
         sys.exit(1)
-    if settings.get('loglevel').lower() in ('critical', 'error',
-                                            'warning', 'notice',
-                                            'info', 'debug'):
+    if settings.get('loglevel').lower() in loglevels:
         log.level_name = settings.get('loglevel').upper()
+    
+    log.debug('\nLoaded Configuration:\n' + pprint.pformat(configuration))
+    
     predicate = settings.get('predicate', 2)
     threshhold = settings.get('threshhold', 1.0)
     binding = settings.get('bind', {'0.0.0.0': 25}).items().pop()
     upstream = [pair.items().pop() for pair in settings['upstream']]
-    server = FuProxy(binding, upstream, providers,
-                     predicate, threshhold)
+    server = FuProxy(binding, upstream, providers, predicate, threshhold)
     try:
         asyncore.loop()
     except KeyboardInterrupt:
