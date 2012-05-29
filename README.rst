@@ -1,6 +1,8 @@
 FU!
 ===
 
+The **F**unneling **U**nit
+
 **DNSBL** checking *SMTP-Proxy*
 
 FU is a simple yet powerful SMTP Proxy that checks the incoming connections against a list of preconfigured DNSBL's. Based on the weights assigned to the lists and a threshhold it makes a decision weather it should proxy the email to the upstream or hang up (close) the connection.
