@@ -37,7 +37,7 @@ def as_reversed(ip, suffix):
     """
     reverse = '.'.join(reversed(ip.split('.')))
     logging.debug('{ip}, {suffix} reversed to: {reverse}.{suffix}.'.format(
-             **locals()))
+                  **locals()))
     return '{reverse}.{suffix}.'.format(reverse=reverse, suffix=suffix)
 
 def is_spam(ip, provider, predicate=2):
@@ -76,7 +76,7 @@ class FuProxy(object, PureProxy):
         if pair is not None:
             conn, addr = pair
             ip, port = addr
-            logging.info('Incoming connection from {0} port {1}'.format(ip, port))
+            logging.info('Incoming connection from {0}:{1}'.format(ip, port))
             results = []
             for domain, provider in self.providers.items():
                 if is_spam(ip, domain, self.predicate):
@@ -92,7 +92,7 @@ class FuProxy(object, PureProxy):
                 logging.info('Relaying message to {0}'.format(self._remoteaddr))
                 channel = SMTPChannel(self, conn, addr)
             else:
-                logging.info('{0} is over the threshhold ({1}). Closing!'.format(
+                logging.info('{0} is over the threshhold {1} - Closing!'.format(
                           sum(results), self.threshhold))
                 conn.close()
 
@@ -102,12 +102,12 @@ def main(configurationfile):
     """
     import yaml
     stream = file(configurationfile, 'r')
-    LEVELS = { 'debug':logging.DEBUG,
-             'info':logging.INFO,
-             'warning':logging.WARNING,
-             'error':logging.ERROR,
-             'critical':logging.CRITICAL,}
     configuration = yaml.load(stream)
+    LEVELS = {'debug':logging.DEBUG,
+              'info':logging.INFO,
+              'warning':logging.WARNING,
+              'error':logging.ERROR,
+              'critical':logging.CRITICAL,}
     
     settings = configuration.get('settings')
     providers = configuration.get('providers')
