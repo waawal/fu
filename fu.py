@@ -131,7 +131,8 @@ def main(configurationfile):
             upstream.append(pair.items().pop())
         elif isinstance(pair[1], float):
             upstream.append((pair.items()[0], {'weight': pair.items()[1]}))
-    upstream = [pair.items().pop() for pair in settings['upstream']]
+        else:
+            raise ValueError
     
     server = FuProxy(binding, upstream, providers, predicate, threshhold)
     
