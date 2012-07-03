@@ -29,7 +29,7 @@ def resolve(zone, predicate=2):
         logging.debug('DNSBL reply: {0} > result: {1}.'.format(reply, result))
         return  result >= predicate
     except (socket.error, ValueError):
-        logging.debug('{0} Not resolvable.'.format(zone))
+        logging.debug('{0} Not resolvable. NOT SPAM!'.format(zone))
         return False
 
 def as_reversed(ip, suffix):
@@ -38,8 +38,6 @@ def as_reversed(ip, suffix):
         '234.52.218.89.ix.dnsbl.manitu.net.'
     """
     reverse = '.'.join(reversed(ip.split('.')))
-    logging.debug('{ip}, {suffix} reversed to: {reverse}.{suffix}.'.format(
-                  **locals()))
     return '{reverse}.{suffix}.'.format(reverse=reverse, suffix=suffix)
 
 def is_spam(ip, provider, predicate=2):
@@ -47,22 +45,22 @@ def is_spam(ip, provider, predicate=2):
         reply is >= the predicament. 2 is the default as per RFC.
     """
     try:
-        ip = socket.gethostbyname(ip) # returns ip
+        ip = socket.gethostbyname(ip) # returns ip if a name was passed
     except socket.error:
         logging.debug('No address associated with hostname.')
         return True # No address associated with hostname.
 
-    zone = as_reversed(ip, provider, predicate=2)
+    zone = as_reversed(ip, provider)
     return resolve(zone, predicate)
 
 def check_lists(ip, providers, threshhold, predicate=2):
     results = []
-    for domain, provider in providers.items():
-        if is_spam(ip, domain, predicate):
-            weight = provider.get('weight', 0.0)
+    for provider, settings in providers.items():
+        if is_spam(ip, provider, predicate):
+            weight = settings.get('weight', 0.0)
             results.append(weight)
             logging.info('Positive reply from {0} appending {1}'.format(
-                          domain, weight))
+                          provider, weight))
     if float(sum(results)) > float(threshhold):
         logging.info('{0} is over the threshhold {1} - SPAM!'.format(
                      sum(results), threshhold))
@@ -107,53 +105,58 @@ class FuProxy(object, PureProxy):
                 channel = SMTPChannel(self, conn, addr)
 
 
-def main(configurationfile):
+def main(configurationfile, dryrun=False):
     """ Parses the passed in configuration file-path with yaml.
     """
     import yaml
     stream = file(configurationfile, 'r')
     configuration = yaml.load(stream)
-    LEVELS = {'debug':logging.DEBUG,
-              'info':logging.INFO,
-              'warning':logging.WARNING,
-              'error':logging.ERROR,
-              'critical':logging.CRITICAL,}
-    
+
+
     settings = configuration.get('settings')
     providers = configuration.get('providers')
-    
+
     if not settings:
         print "Error: No settings found in the configuration file."
         sys.exit(1)
-    if settings.get('loglevel').lower() in LEVELS.keys():
-        logging.basicConfig(level=LEVELS[settings['loglevel']])
-    else:
-        logging.basicConfig(level=logging.NOTSET)
-    
-    logging.debug('\nLoaded Configuration:\n' + pprint.pformat(configuration))
-    
+
     predicate = settings.get('predicate', 2)
     threshhold = settings.get('threshhold', 1.0)
     binding = settings.get('bind', {'0.0.0.0': 25}).items()[0]
     upstream = [item.items()[0] for item in settings['upstream']]
-    
-    server = FuProxy(binding, upstream, providers, predicate, threshhold)
-    
-    try:
-        asyncore.loop()
-    except KeyboardInterrupt:
-        logging.critical('Interrupted. Cleaning up!')
+
+    if not dryrun:
+        LEVELS = {'debug':logging.DEBUG,
+              'info':logging.INFO,
+              'warning':logging.WARNING,
+              'error':logging.ERROR,
+              'critical':logging.CRITICAL,}
+        if settings.get('loglevel').lower() in LEVELS.keys():
+            logging.basicConfig(level=LEVELS[settings['loglevel']])
+        else:
+            logging.basicConfig(level=logging.NOTSET)
+
+        server = FuProxy(binding, upstream, providers, predicate, threshhold)
+        try:
+            asyncore.loop()
+        except KeyboardInterrupt:
+            logging.critical('Interrupted. Cleaning up!')
+    else:
+        logging.basicConfig(level=logging.DEBUG)
+        check_lists(dryrun, providers, threshhold, predicate)
 
 def dispatch():
     """ Dispatching of commandline arguments to main(), the entry point for
         scripts.
     """
     parser = argparse.ArgumentParser(description='DNSBL SMTPD')
-    parser.add_argument('configuration', metavar='configuration', type=str,
+    parser.add_argument('-c', '--configuration',
+                        metavar='configuration', type=str,
                         help='Configuration File in YAML-format.')
+    parser.add_argument('-d', '--dryrun', metavar='dryrun', type=str, default='',
+                        help='A IPv4 address to test for false positives')
     args = parser.parse_args()
-    
-    main(args.configuration)
+    main(args.configuration, args.dryrun)
 
 if __name__ == '__main__':
     dispatch()

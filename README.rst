@@ -51,12 +51,14 @@ Example Configuration File
 Options and Arguments
 ==========================
 
-Options accepted by the ``greenbalance`` command.
+Options accepted by the ``fu`` command.
 
 -h, --help
   Show a help message and exit.
 -c, --configuration
   Configuration file.
+-d, --dryrun
+  A IPv4-address to run a test against based on the provided configuration file.
 
 References
 ==========
