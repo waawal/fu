@@ -26,10 +26,11 @@ def resolve(zone, predicate=2):
     try:
         reply = socket.gethostbyname(zone)
         result = int(reply.split('.')[-1])
-        logging.debug('DNSBL reply: {0} > result: {1}.'.format(reply, result))
+        logging.debug('DNSBL reply: {0} (Predicate is: {1}).'.format(result,
+                                                                     predicate))
         return  result >= predicate
     except (socket.error, ValueError):
-        logging.debug('{0} Not resolvable. NOT SPAM!'.format(zone))
+        logging.debug('Negative response from {0}'.format(zone))
         return False
 
 def as_reversed(ip, suffix):
@@ -44,12 +45,6 @@ def is_spam(ip, provider, predicate=2):
     """ Returns either True or False depending on if the last digits in the
         reply is >= the predicament. 2 is the default as per RFC.
     """
-    try:
-        ip = socket.gethostbyname(ip) # returns ip if a name was passed
-    except socket.error:
-        logging.debug('No address associated with hostname.')
-        return True # No address associated with hostname.
-
     zone = as_reversed(ip, provider)
     return resolve(zone, predicate)
 
@@ -59,13 +54,13 @@ def check_lists(ip, providers, threshhold, predicate=2):
         if is_spam(ip, provider, predicate):
             weight = settings.get('weight', 0.0)
             results.append(weight)
-            logging.info('Positive reply from {0} appending {1}'.format(
+            logging.info('Positive response from {0} adding {1} to weight'.format(
                           provider, weight))
     if float(sum(results)) > float(threshhold):
-        logging.info('{0} is over the threshhold {1} - SPAM!'.format(
+        logging.info('{0} is above the threshhold ({1}) - SPAM!'.format(
                      sum(results), threshhold))
         return True
-    logging.info('{0} is below the threshhold ({1})'.format(
+    logging.info('{0} is below the threshhold ({1}) - NOT SPAM!'.format(
                  sum(results), threshhold))
     return False
 
@@ -126,15 +121,16 @@ def main(configurationfile, dryrun=False):
     upstream = [item.items()[0] for item in settings['upstream']]
 
     if not dryrun:
+        FORMAT = "%(levelname)s %(asctime)s %(message)s"
         LEVELS = {'debug':logging.DEBUG,
-              'info':logging.INFO,
-              'warning':logging.WARNING,
-              'error':logging.ERROR,
-              'critical':logging.CRITICAL,}
+                  'info':logging.INFO,
+                  'warning':logging.WARNING,
+                  'error':logging.ERROR,
+                  'critical':logging.CRITICAL,}
         if settings.get('loglevel').lower() in LEVELS.keys():
-            logging.basicConfig(level=LEVELS[settings['loglevel']])
+            logging.basicConfig(level=LEVELS[settings['loglevel']], format=FORMAT)
         else:
-            logging.basicConfig(level=logging.NOTSET)
+            logging.basicConfig(level=logging.NOTSET, format=FORMAT)
 
         server = FuProxy(binding, upstream, providers, predicate, threshhold)
         try:
@@ -142,7 +138,8 @@ def main(configurationfile, dryrun=False):
         except KeyboardInterrupt:
             logging.critical('Interrupted. Cleaning up!')
     else:
-        logging.basicConfig(level=logging.DEBUG)
+        FORMAT = "%(message)s"
+        logging.basicConfig(level=logging.DEBUG, format=FORMAT)
         check_lists(dryrun, providers, threshhold, predicate)
 
 def dispatch():
@@ -153,10 +150,10 @@ def dispatch():
     parser.add_argument('-c', '--configuration',
                         metavar='configuration', type=str,
                         help='Configuration File in YAML-format.')
-    parser.add_argument('-t', '--test', metavar='dryrun', type=str, default='',
+    parser.add_argument('-t', '--test', metavar='test', type=str, default='',
                         help='A IPv4 address to test for false positives')
     args = parser.parse_args()
-    main(args.configuration, args.dryrun)
+    main(args.configuration, args.test)
 
 if __name__ == '__main__':
     dispatch()

@@ -58,13 +58,13 @@ Example of a Dry Run
 ::
 
     $fu --configuration /etc/fu.yml --test 201.8.3.1
-    DEBUG:root:1.3.8.201.ix.dnsbl.manitu.net. Not resolvable. NOT SPAM!
-    DEBUG:root:1.3.8.201.truncate.gbudb.net. Not resolvable. NOT SPAM!
-    DEBUG:root:1.3.8.201.rhsbl.ahbl.org. Not resolvable. NOT SPAM!
-    DEBUG:root:DNSBL reply: 127.0.0.11 > result: 11.
-    INFO:root:Positive reply from zen.spamhaus.org appending 0.5
-    DEBUG:root:1.3.8.201.bl.spamcop.net. Not resolvable. NOT SPAM!
-    INFO:root:0.5 is below the threshhold (1.0)
+    Negative response from 1.3.8.201.ix.dnsbl.manitu.net.
+    Negative response from 1.3.8.201.truncate.gbudb.net.
+    Negative response from 1.3.8.201.rhsbl.ahbl.org.
+    DNSBL reply: 11 (Predicate is: 2).
+    Positive response from zen.spamhaus.org adding 0.5 to weight
+    Negative response from 1.3.8.201.bl.spamcop.net.
+    0.5 is below the threshhold (1.0) - NOT SPAM!
 
 Installation and Deployment
 ===========================
