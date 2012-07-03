@@ -126,14 +126,7 @@ def main(configurationfile):
     predicate = settings.get('predicate', 2)
     threshhold = settings.get('threshhold', 1.0)
     binding = settings.get('bind', {'0.0.0.0': 25}).items().pop()
-    upstream = []
-    for pair in settings['upstream']:
-        if isinstance(pair[1], collections.Mapping):
-            upstream.append(pair.items()[0])
-        elif isinstance(pair[1], float):
-            upstream.append((pair.items()[0], {'weight': pair.items()[1]}))
-        else:
-            raise ValueError
+    upstream = [item.items()[0] for item in settings['upstream']]
     
     server = FuProxy(binding, upstream, providers, predicate, threshhold)
     
