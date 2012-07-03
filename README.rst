@@ -75,10 +75,11 @@ Debian and Ubuntu
 -----------------
 
 A one-liner to install on a fresh system.
+::
 
-    ``sudo`` ``apt-get`` update; ``sudo`` ``apt-get`` install python-pip python-gevent python-yaml; ``sudo`` ``pip`` install fu
+    sudo apt-get update; sudo apt-get install python-pip python-gevent python-yaml; sudo pip install fu
 
-You then need to create the configuration file.
+*You then need to create the configuration file.*
 
 References
 ==========
