@@ -2,7 +2,6 @@
 
 import sys
 import argparse
-import pprint
 import itertools
 import collections
 import logging
