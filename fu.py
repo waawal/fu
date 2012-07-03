@@ -19,7 +19,7 @@ import socket
 from smtpd import PureProxy, SMTPChannel
 
 
-def check(zone, predicate=2):
+def resolve(zone, predicate=2):
     """ Checks if the name resolves and if the last part of the reply is
         >= the predicate.
     """
@@ -53,7 +53,7 @@ def is_spam(ip, provider, predicate=2):
         return True # No address associated with hostname.
 
     zone = as_reversed(ip, provider)
-    return check(zone, predicate)
+    return resolve(zone, predicate)
 
 def check_lists(providers):
     results = []
