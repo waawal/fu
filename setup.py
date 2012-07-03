@@ -19,24 +19,27 @@ if sys.argv[-1] == 'publish':
 
 settings.update(
     name='fu',
-    version='0.0.1',
+    version='0.9.0',
     description='DNSBL checking SMTPD-Proxy',
     long_description=open('README.rst').read(),
     author='Daniel Waardal',
     author_email='waawal@boom.ws',
-    url='', # TODO: Fix!
+    url='https://github.com/waawal/fu',
     py_modules= ['fu',],
-    install_requires=['gevent', 'logbook', 'argparse', 'PyYAML',],
-    license='GPL',
+    install_requires=['gevent','argparse', 'PyYAML',],
+    license='gpl',
     classifiers=(
-        # 'Development Status :: 5 - Production/Stable',
-        #'Intended Audience :: Developers',
-        #'Natural Language :: English',
-        #'License :: OSI Approved :: BSD License',
+        'Development Status :: 4 - Production/Stable',
+        'Intended Audience :: Developers',
+        'Intended Audience :: System Administrators',
+        'License :: OSI Approved :: GNU General Public License (GPL)',
+        'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
         'Programming Language :: Python',
-        # 'Programming Language :: Python :: 2.5',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
+        'Topic :: Internet',
+        'Topic :: System :: Systems Administration',
+        'Topic :: Communications',
     )
 )
 
