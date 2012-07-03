@@ -1,7 +1,8 @@
-FU!
-===
-
-The **Funneling Unit**
+=====================================
+FU - The Funneling Unit
+=====================================
+:Info: Read the `documentation <http://fu.readthedocs.com>`_ hosted at readthedocs.
+:Author: Daniel Waardal
 
 *DNSBL* checking *SMTP-Proxy*
 
