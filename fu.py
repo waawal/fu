@@ -55,6 +55,16 @@ def is_spam(ip, provider, predicate=2):
     zone = as_reversed(ip, provider)
     return check(zone, predicate)
 
+def check_lists(providers):
+    results = []
+    for domain, provider in providers.items():
+        if is_spam(ip, domain, self.predicate):
+            weight = provider.get('weight', 0.0)
+            results.append(weight)
+            logging.info('Positive reply from {0} appending {1}'.format(
+                       domain, weight))
+    return results
+
 
 class FuProxy(object, PureProxy):
     """ The Proxy, subclass of PureProxy.
@@ -79,13 +89,8 @@ class FuProxy(object, PureProxy):
             conn, addr = pair
             ip, port = addr
             logging.info('Incoming connection from {0}:{1}'.format(ip, port))
-            results = []
-            for domain, provider in self.providers.items():
-                if is_spam(ip, domain, self.predicate):
-                    weight = provider.get('weight', 0.0)
-                    results.append(weight)
-                    logging.info('Positive reply from {0} appending {1}'.format(
-                               domain, weight))
+            
+            results = check_lists(self.providers)
 
             if float(sum(results)) < float(self.threshhold):
                 logging.info('{0} is below the threshhold ({1})'.format(
@@ -94,7 +99,7 @@ class FuProxy(object, PureProxy):
                 logging.info('Relaying message to {0}'.format(self._remoteaddr))
                 channel = SMTPChannel(self, conn, addr)
             else:
-                logging.info('{0} is over the threshhold {1} - Closing!'.format(
+                logging.info('{0} is over the threshhold {1} - SPAM!'.format(
                           sum(results), self.threshhold))
                 conn.close()
 
