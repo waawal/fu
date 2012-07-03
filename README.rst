@@ -66,15 +66,19 @@ Example of a Dry Run
     DEBUG:root:1.3.8.201.bl.spamcop.net. Not resolvable. NOT SPAM!
     INFO:root:0.5 is below the threshhold (1.0)
 
-Deployment
-==========
+Installation and Deployment
+===========================
 
-FU is dependent on gevent to harness the power of libevent. You may of course pip-install fu as a normal python application/module, however it is usually easier to just fetch gevent from the OS package repository.
+FU is dependent on gevent to harness the power of libevent.
 
 Debian and Ubuntu
 -----------------
 
-    ``sudo`` ``apt-get`` install python-pip python-gevent python-yaml; ``pip`` install fu
+A one-liner to install on a fresh system.
+
+    ``sudo`` ``apt-get`` update; ``sudo`` ``apt-get`` install python-pip python-gevent python-yaml; ``sudo`` ``pip`` install fu
+
+You then need to create the configuration file.
 
 References
 ==========
