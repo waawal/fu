@@ -52,18 +52,24 @@ def is_spam(ip, provider, predicate=2):
         logging.debug('No address associated with hostname.')
         return True # No address associated with hostname.
 
-    zone = as_reversed(ip, provider)
+    zone = as_reversed(ip, provider, predicate=2)
     return resolve(zone, predicate)
 
-def check_lists(providers):
+def check_lists(ip, providers, threshhold, predicate=2):
     results = []
     for domain, provider in providers.items():
-        if is_spam(ip, domain, self.predicate):
+        if is_spam(ip, domain, predicate):
             weight = provider.get('weight', 0.0)
             results.append(weight)
             logging.info('Positive reply from {0} appending {1}'.format(
-                       domain, weight))
-    return results
+                          domain, weight))
+    if float(sum(results)) > float(threshhold):
+        logging.info('{0} is over the threshhold {1} - SPAM!'.format(
+                     sum(results), threshhold))
+        return True
+    logging.info('{0} is below the threshhold ({1})'.format(
+                 sum(results), threshhold))
+    return False
 
 
 class FuProxy(object, PureProxy):
@@ -90,18 +96,15 @@ class FuProxy(object, PureProxy):
             ip, port = addr
             logging.info('Incoming connection from {0}:{1}'.format(ip, port))
             
-            results = check_lists(self.providers)
+            spam = check_lists(ip, self.providers, self.threshhold,
+                               self.predicate)
 
-            if float(sum(results)) < float(self.threshhold):
-                logging.info('{0} is below the threshhold ({1})'.format(
-                          sum(results), self.threshhold))
+            if spam:
+                conn.close()
+            else:
                 self._remoteaddr = self.upstreams.next()
                 logging.info('Relaying message to {0}'.format(self._remoteaddr))
                 channel = SMTPChannel(self, conn, addr)
-            else:
-                logging.info('{0} is over the threshhold {1} - SPAM!'.format(
-                          sum(results), self.threshhold))
-                conn.close()
 
 
 def main(configurationfile):
