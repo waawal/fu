@@ -15,6 +15,18 @@ Features
 * Round Robin Load Balancing of Backends.
 * Ability to check multiple blacklists.
 
+Options and Arguments
+==========================
+
+Options accepted by the ``fu`` command.
+
+-h, --help
+  Show a help message and exit.
+-c, --configuration
+  Configuration file.
+-d, --dryrun
+  A IPv4-address to run a test against based on the provided configuration file.
+
 Deployment
 ==========
 
@@ -25,9 +37,11 @@ Debian and Ubuntu
 
     ``sudo`` ``apt-get`` install python-pip python-gevent python-yaml; ``pip`` install fu
 
+Examples
+========
 
-Example Configuration File
-==========================
+Configuration File
+------------------
 ::
 
     settings:
@@ -48,24 +62,8 @@ Example Configuration File
         truncate.gbudb.net: {weight: 1.0}
         zen.spamhaus.org: {weight: 0.5}
 
-Options and Arguments
-==========================
-
-Options accepted by the ``fu`` command.
-
--h, --help
-  Show a help message and exit.
--c, --configuration
-  Configuration file.
--d, --dryrun
-  A IPv4-address to run a test against based on the provided configuration file.
-
-Examples
-========
-
 Example of a Dryrun
 -------------------
-
 ::
 
     $fu -c /etc/fu.yml -d 201.8.3.1
@@ -76,7 +74,6 @@ Example of a Dryrun
     INFO:root:Positive reply from zen.spamhaus.org appending 0.5
     DEBUG:root:1.3.8.201.bl.spamcop.net. Not resolvable. NOT SPAM!
     INFO:root:0.5 is below the threshhold (1.0)
-
 
 References
 ==========
