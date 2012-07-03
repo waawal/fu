@@ -48,6 +48,16 @@ Example Configuration File
         truncate.gbudb.net: {weight: 1.0}
         zen.spamhaus.org: {weight: 0.5}
 
+Options and Arguments
+==========================
+
+Options accepted by the ``greenbalance`` command.
+
+-h, --help
+  Show a help message and exit.
+-c, --configuration
+  Configuration file.
+
 References
 ==========
 

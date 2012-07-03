@@ -5,6 +5,7 @@ import argparse
 import pprint
 import itertools
 import collections
+import logging
 
 try:
     import gevent.monkey
@@ -141,7 +142,7 @@ def main(configurationfile):
     except KeyboardInterrupt:
         logging.critical('Interrupted. Cleaning up!')
 
-def dispatch()
+def dispatch():
     """ Dispatching of commandline arguments to main(), the entry point for
         scripts.
     """
