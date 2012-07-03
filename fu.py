@@ -1,4 +1,8 @@
-""" DNSBL checking SMTPD-Proxy """
+""" DNSBL checking SMTPD-Proxy on gevent steroids """
+
+
+__all__ = ('resolve', 'as_reversed', 'check_lists', 'is_spam')
+
 
 import sys
 import argparse
@@ -17,8 +21,6 @@ import asyncore
 import socket
 from smtpd import PureProxy, SMTPChannel
 
-
-__all__ = ('resolve', 'as_reversed', 'check_lists', 'is_spam')
 
 def resolve(zone):
     """ Checks if the name resolves and if the last part of the reply is
