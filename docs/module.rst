@@ -1,2 +1,6 @@
+===
+API
+===
+
 .. automodule:: fu
    :members:

@@ -18,15 +18,20 @@ import socket
 from smtpd import PureProxy, SMTPChannel
 
 
-def resolve(zone, predicate=2):
+__all__ = ('resolve', 'as_reversed', 'check_lists', 'is_spam')
+
+def resolve(zone):
     """ Checks if the name resolves and if the last part of the reply is
         >= the predicate.
+        
+       :param zone: A valid zone for lookup ex: '234.52.218.89.ix.dnsbl.manitu.net.'
+       :type zone: string
+       :rtype: integer
     """
     try:
         reply = socket.gethostbyname(zone)
         result = int(reply.split('.')[-1])
-        logging.debug('DNSBL reply: {0} (Predicate is: {1}).'.format(result,
-                                                                     predicate))
+        logging.debug('DNSBL reply: {0}'.format(result))
         return  result >= predicate
     except (socket.error, ValueError):
         logging.debug('Negative response from {0}'.format(zone))
@@ -36,6 +41,12 @@ def as_reversed(ip, suffix):
     """ *Reverses* the ipv4 so that it can be checked
         >>> as_reversed(ip='89.218.52.234', suffix='ix.dnsbl.manitu.net')
         '234.52.218.89.ix.dnsbl.manitu.net.'
+        
+        :param ip: A IPv4 address.
+        :type ip: string
+        :param suffix: The FQDN of the DNSBL Provider.
+        :type predicate: string
+        :rtype: string
     """
     reverse = '.'.join(reversed(ip.split('.')))
     return '{reverse}.{suffix}.'.format(reverse=reverse, suffix=suffix)
@@ -43,11 +54,31 @@ def as_reversed(ip, suffix):
 def is_spam(ip, provider, predicate=2):
     """ Returns either True or False depending on if the last digits in the
         reply is >= the predicament. 2 is the default as per RFC.
+        
+        :param ip: A IPv4 address to be checked.
+        :type ip: string
+        :param provider: The FQDN of the DNSBL Provider.
+        :type provider: string
+        :param predicate: The DNSBL-reply must be equal to this or higher.
+        :type predicate: integer
+        :rtype: bool
     """
     zone = as_reversed(ip, provider)
-    return resolve(zone, predicate)
+    return resolve(zone) >= predicate
 
 def check_lists(ip, providers, threshhold, predicate=2):
+    """ Checks a ip against a list of DNSBL providers.
+        
+        :param ip: A IPv4 address to be checked.
+        :type ip: string
+        :param providers: A mapping (dict) containing FQDN's as keys and weights as values (floats).
+        :type providers: Mapping
+        :param threshhold: If the combined results >= this value, we deem it as spam.
+        :type threshhold: float
+        :param predicate: The DNSBL-reply must be equal to this or higher.
+        :type predicate: integer
+        :rtype: bool
+    """
     results = []
     for provider, settings in providers.items():
         if is_spam(ip, provider, predicate):
@@ -65,7 +96,7 @@ def check_lists(ip, providers, threshhold, predicate=2):
 
 
 class FuProxy(object, PureProxy):
-    """ The Proxy, subclass of PureProxy.
+    """ The Proxy, subclass of smptd.PureProxy.
     """
     def __init__(self, binding, upstreams, providers,
                  predicate=2, threshhold=1.0):
@@ -79,8 +110,7 @@ class FuProxy(object, PureProxy):
 
     def handle_accept(self):
         """ Checks the incoming connection against the configured DNSBL's.
-            if the result is >= than the preconfigured threshhold,
-            the connection gets closed.
+            if the result is >=  self.threshhold, the connection gets closed.
         """
         pair = self.accept()
         if pair is not None:

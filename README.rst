@@ -23,7 +23,7 @@ Options accepted by the ``fu`` command.
 
 -h, --help
   Show a help message and exit.
--c, --configuration
+-c, --config
   Configuration file.
 -t, --test
   A IPv4-address to run a test against based on the provided configuration file.
@@ -57,7 +57,7 @@ Example of a Dry Run
 --------------------
 ::
 
-    $fu --configuration /etc/fu.yml --test 201.8.3.1
+    $fu --config /etc/fu.yml --test 201.8.3.1
     Negative response from 1.3.8.201.ix.dnsbl.manitu.net.
     Negative response from 1.3.8.201.truncate.gbudb.net.
     Negative response from 1.3.8.201.rhsbl.ahbl.org.
