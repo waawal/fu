@@ -60,6 +60,24 @@ Options accepted by the ``fu`` command.
 -d, --dryrun
   A IPv4-address to run a test against based on the provided configuration file.
 
+Examples
+========
+
+Example of a Dryrun
+-------------------
+
+::
+
+    $fu -c /etc/fu.yml -d 201.8.3.1
+    DEBUG:root:1.3.8.201.ix.dnsbl.manitu.net. Not resolvable. NOT SPAM!
+    DEBUG:root:1.3.8.201.truncate.gbudb.net. Not resolvable. NOT SPAM!
+    DEBUG:root:1.3.8.201.rhsbl.ahbl.org. Not resolvable. NOT SPAM!
+    DEBUG:root:DNSBL reply: 127.0.0.11 > result: 11.
+    INFO:root:Positive reply from zen.spamhaus.org appending 0.5
+    DEBUG:root:1.3.8.201.bl.spamcop.net. Not resolvable. NOT SPAM!
+    INFO:root:0.5 is below the threshhold (1.0)
+
+
 References
 ==========
 
