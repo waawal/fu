@@ -114,7 +114,8 @@ def main(configurationfile):
     settings = configuration.get('settings')
     providers = configuration.get('providers')
     
-    if not settings or not providers:
+    if not settings:
+        print "Error: No settings found in the configuration file."
         sys.exit(1)
     if settings.get('loglevel').lower() in LEVELS.keys():
         logging.basicConfig(level=LEVELS[settings['loglevel']])
@@ -125,7 +126,7 @@ def main(configurationfile):
     
     predicate = settings.get('predicate', 2)
     threshhold = settings.get('threshhold', 1.0)
-    binding = settings.get('bind', {'0.0.0.0': 25}).items().pop()
+    binding = settings.get('bind', {'0.0.0.0': 25}).items()[0]
     upstream = [item.items()[0] for item in settings['upstream']]
     
     server = FuProxy(binding, upstream, providers, predicate, threshhold)
