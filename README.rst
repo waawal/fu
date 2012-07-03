@@ -27,16 +27,6 @@ Options accepted by the ``fu`` command.
 -d, --dryrun
   A IPv4-address to run a test against based on the provided configuration file.
 
-Deployment
-==========
-
-FU is dependent on gevent to harness the power of libevent. You may of course pip-install fu as a normal python application/module, however it is usually easier to just fetch gevent from the OS package repository.
-
-Debian and Ubuntu
------------------
-
-    ``sudo`` ``apt-get`` install python-pip python-gevent python-yaml; ``pip`` install fu
-
 Examples
 ========
 
@@ -74,6 +64,16 @@ Example of a Dryrun
     INFO:root:Positive reply from zen.spamhaus.org appending 0.5
     DEBUG:root:1.3.8.201.bl.spamcop.net. Not resolvable. NOT SPAM!
     INFO:root:0.5 is below the threshhold (1.0)
+
+Deployment
+==========
+
+FU is dependent on gevent to harness the power of libevent. You may of course pip-install fu as a normal python application/module, however it is usually easier to just fetch gevent from the OS package repository.
+
+Debian and Ubuntu
+-----------------
+
+    ``sudo`` ``apt-get`` install python-pip python-gevent python-yaml; ``pip`` install fu
 
 References
 ==========
