@@ -127,7 +127,7 @@ def main(configurationfile):
     binding = settings.get('bind', {'0.0.0.0': 25}).items().pop()
     upstream = []
     for pair in settings['upstream']:
-        if if isinstance(pair[1], collections.Mapping):
+        if isinstance(pair[1], collections.Mapping):
             upstream.append(pair.items().pop())
         elif isinstance(pair[1], float):
             upstream.append((pair.items()[0], {'weight': pair.items()[1]}))
