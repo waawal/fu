@@ -11,7 +11,7 @@ FU is a simple yet powerful SMTP Proxy that checks the incoming connections agai
 FU is optimized to run in a virtual machine environment. It should be able to handle a couple of hundred incoming connections per second on a single core system/vm.
 
 Features
---------
+========
 
 * Round Robin Load Balancing of Backends.
 * Ability to check multiple blacklists.
