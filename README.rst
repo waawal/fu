@@ -25,7 +25,7 @@ Options accepted by the ``fu`` command.
   Show a help message and exit.
 -c, --configuration
   Configuration file.
--d, --dryrun
+-t, --test
   A IPv4-address to run a test against based on the provided configuration file.
 
 Examples
@@ -53,11 +53,11 @@ Configuration File
         truncate.gbudb.net: {weight: 1.0}
         zen.spamhaus.org: {weight: 0.5}
 
-Example of a Dryrun
--------------------
+Example of a Dry Run
+--------------------
 ::
 
-    $fu -c /etc/fu.yml -d 201.8.3.1
+    $fu --configuration /etc/fu.yml --test 201.8.3.1
     DEBUG:root:1.3.8.201.ix.dnsbl.manitu.net. Not resolvable. NOT SPAM!
     DEBUG:root:1.3.8.201.truncate.gbudb.net. Not resolvable. NOT SPAM!
     DEBUG:root:1.3.8.201.rhsbl.ahbl.org. Not resolvable. NOT SPAM!

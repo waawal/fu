@@ -153,7 +153,7 @@ def dispatch():
     parser.add_argument('-c', '--configuration',
                         metavar='configuration', type=str,
                         help='Configuration File in YAML-format.')
-    parser.add_argument('-d', '--dryrun', metavar='dryrun', type=str, default='',
+    parser.add_argument('-t', '--test', metavar='dryrun', type=str, default='',
                         help='A IPv4 address to test for false positives')
     args = parser.parse_args()
     main(args.configuration, args.dryrun)
